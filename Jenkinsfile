@@ -1,27 +1,32 @@
 pipeline {
     agent any
-    environment {
+    environment{
         dockerHome = tool 'myDocker'
         mavenHome = tool 'myMaven'
-        PATH = "${dockerHome}/bin:${mavenHome}/bin:${env.PATH}"
+        PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
     }
     stages {
-        stage('Build') {
+        stage('Checkout') {
             steps {
                 sh 'mvn --version'
                 sh 'docker --version'
                 echo "Build stage"
             }
         }
+        stage('Compile'){
+            steps{
+                sh 'mvn clean compile'
+            }
+        }
         stage('Test') {
             steps {
-                echo "Test-stage"
+                sh 'mvn test'
             }
         }
         stage('Integration Test') {
             steps {
-                echo "Integration Test stage"
+                sh 'mvn failsafe:integration-test'
             }
         }
-    }
+    } 
 }
