@@ -1,20 +1,27 @@
 pipeline {
     agent any
-    environment{
-        dockerHome = tool 'myDocker'
-        mavenHome = tool 'myMaven'
-        PATH = "$dockerHome/bin:$mavenHome/bin:$PATH"
+    tools {
+        jdk 'jdk17'
+        maven 'myMaven'
+    }
+    environment {
+        PATH = "$MAVEN_HOME/bin:$PATH"
     }
     stages {
-        stage('Checkout') {
+        stage('Verify Environment') {
             steps {
+                sh 'java -version'
                 sh 'mvn --version'
-                sh 'docker --version'
-                echo "Build stage"
+                sh 'docker --version || echo "Docker not installed"'
             }
         }
-        stage('Compile'){
-            steps{
+        stage('Checkout') {
+            steps {
+                echo "Checking out the repository..."
+            }
+        }
+        stage('Compile') {
+            steps {
                 sh 'mvn clean compile'
             }
         }
@@ -28,5 +35,5 @@ pipeline {
                 sh 'mvn failsafe:integration-test'
             }
         }
-    } 
+    }
 }
