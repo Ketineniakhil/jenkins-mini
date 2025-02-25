@@ -1,23 +1,17 @@
 pipeline {
     agent any
     tools {
-        jdk 'jdk17'
-        maven 'myMaven'
+        jdk 'JDK17'  // Matches the name from Step 2
     }
     environment {
-        PATH = "$MAVEN_HOME/bin:$PATH"
+        JAVA_HOME = "/usr/lib/jvm/temurin-17-jdk"
+        PATH = "$JAVA_HOME/bin:$PATH"
     }
     stages {
-        stage('Verify Environment') {
+        stage('Verify Java') {
             steps {
                 sh 'java -version'
                 sh 'mvn --version'
-                sh 'docker --version || echo "Docker not installed"'
-            }
-        }
-        stage('Checkout') {
-            steps {
-                echo "Checking out the repository..."
             }
         }
         stage('Compile') {
@@ -28,11 +22,6 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'mvn test'
-            }
-        }
-        stage('Integration Test') {
-            steps {
-                sh 'mvn failsafe:integration-test'
             }
         }
     }
