@@ -1,14 +1,11 @@
 pipeline {
     agent any
-    tools {
-        jdk 'JDK17'  // Matches the name from Step 2
-    }
     environment {
-        JAVA_HOME = "/usr/lib/jvm/temurin-17-jdk"
-        PATH = "$JAVA_HOME/bin:$PATH"
+        MAVEN_HOME = "/usr/share/maven"
+        PATH = "$MAVEN_HOME/bin:$PATH"
     }
     stages {
-        stage('Verify Java') {
+        stage('Verify Tools') {
             steps {
                 sh 'java -version'
                 sh 'mvn --version'
